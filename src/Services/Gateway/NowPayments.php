@@ -60,6 +60,8 @@ final class NowPayments extends Base
     }
     
     private function _curlPost($url,$params=false){
+
+        $key = Config::obtain('nowpayments_key');
         
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -68,7 +70,7 @@ final class NowPayments extends Base
         curl_setopt($ch, CURLOPT_TIMEOUT, 300);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
         curl_setopt(
-            $ch, CURLOPT_HTTPHEADER, array('x-api-key: ' .$this->config['key'], 'Content-Type: application/json')
+            $ch, CURLOPT_HTTPHEADER, array('x-api-key: ' .$key, 'Content-Type: application/json')
         );
         $result = curl_exec($ch);
         curl_close($ch);
@@ -83,7 +85,7 @@ final class NowPayments extends Base
     {
         $antiXss = new AntiXSS();
 
-        $price = $antiXss->xss_clean($request->getParam('price'));
+        $price = (float) $antiXss->xss_clean($request->getParam('price'));
         $invoice_id = $antiXss->xss_clean($request->getParam('invoice_id'));
         $trade_no = self::generateGuid();
 
@@ -107,8 +109,24 @@ final class NowPayments extends Base
 
         $exchange_amount = Exchange::exchange($price, 'USD', Config::obtain('nowpayments_currency'));
 
+        /* 
+        curl --location 'https://api.nowpayments.io/v1/invoice' \
+        --header 'x-api-key: abcdefg' \
+        --header 'Content-Type: application/json' \
+        --data '{
+        "price_amount": 1000,
+        "price_currency": "usd",
+        "order_id": "RGDBP-21314",
+        "order_description": "Apple Macbook Pro 2019 x 1",
+        "ipn_callback_url": "https://nowpayments.io",
+        "success_url": "https://nowpayments.io",
+        "cancel_url": "https://nowpayments.io"
+        }'
+
+        */
+
         $params = [
-            'price_amount' => $exchange_amount / 100,
+            'price_amount' => $exchange_amount,
             'price_currency' => "usd",
             'order_id' => $trade_no,
             'ipn_callback_url' => $_ENV['baseUrl'] . '/payment/notify/nowpayments',
@@ -117,9 +135,9 @@ final class NowPayments extends Base
         ];
         $params_string = json_encode($params);
 
-        $nowpayments_url = Config::obtain('nowpayments_url')
+        $nowpayments_url = Config::obtain('nowpayments_url');
 
-        $ret = {};
+        $ret = array();
         try {
             $ret_raw = self::_curlPost($nowpayments_url . '/invoice', $params_string);
 

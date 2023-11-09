@@ -47,6 +47,7 @@ final class BillingController extends BaseController
         'paypal_locale',
         // Nowpayments
         'nowpayments',
+        'nowpayments_url',
         'nowpayments_currency',
         'nowpayments_key',
         'nowpayments_ipn',

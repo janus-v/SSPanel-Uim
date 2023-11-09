@@ -37,6 +37,9 @@
                                     <a href="#f2f" class="nav-link" data-bs-toggle="tab">支付宝当面付</a>
                                 </li>
                                 <li class="nav-item">
+                                    <a href="#nowpayments" class="nav-link" data-bs-toggle="tab">Nowpayments</a>
+                                </li>
+                                <li class="nav-item">
                                     <a href="#stripe" class="nav-link" data-bs-toggle="tab">Stripe</a>
                                 </li>
                                 <li class="nav-item">
