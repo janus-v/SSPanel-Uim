@@ -54,7 +54,7 @@
                                                         <div id="product-{$tabp->id}-price"
                                                              class="display-6 my-3">
                                                             <p class="fw-bold">{$tabp->price}</p>
-                                                            <i class="ti ti-currency-yuan"></i>
+                                                            <i class="ti ti-currency-dollar"></i>
                                                         </div>
                                                         <div class="list-group list-group-flush">
                                                             <div class="list-group-item">
@@ -154,7 +154,7 @@
                                                         <div id="product-{$bandwidth->id}-price"
                                                              class="display-6 my-3">
                                                             <p class="fw-bold">{$bandwidth->price}</p>
-                                                            <i class="ti ti-currency-yuan"></i>
+                                                            <i class="ti ti-currency-dollar"></i>
                                                         </div>
                                                         <div class="list-group list-group-flush">
                                                             <div class="list-group-item">
@@ -202,7 +202,7 @@
                                                         <div id="product-{$time->id}-price"
                                                              class="display-6 my-3"><p
                                                                     class="fw-bold">{$time->price}</p>
-                                                            <i class="ti ti-currency-yuan"></i>
+                                                            <i class="ti ti-currency-dollar"></i>
                                                         </div>
                                                         <div class="list-group list-group-flush">
                                                             <div class="list-group-item">
