@@ -160,14 +160,15 @@ final class NowPayments extends Base
     public function notify($request, $response, $args): ResponseInterface
     {
         $payload = trim(file_get_contents('php://input'));
-        $json_param = json_decode($payload, true); 
+        $json_param = json_decode($payload, true);
+        $ipn = trim(Config::obtain('nowpayments_ipn'));
 
         if (isset($_SERVER['HTTP_X_NOWPAYMENTS_SIG']) && !empty($_SERVER['HTTP_X_NOWPAYMENTS_SIG'])) {
             $received_hmac = $_SERVER['HTTP_X_NOWPAYMENTS_SIG'];
             if ($json_param !== false && !empty($json_param)) {
                 ksort($json_param);
                 $sorted_request_json = json_encode($json_param, JSON_UNESCAPED_SLASHES);
-                $computedSignature = hash_hmac("sha512", $sorted_request_json, trim($this->config['ipn']));
+                $computedSignature = hash_hmac("sha512", $sorted_request_json, $ipn);
 
                 if (! self::hashEqual($received_hmac, $computedSignature)) {
                     throw new \ErrorException('HMAC signature does not match');
@@ -180,10 +181,7 @@ final class NowPayments extends Base
             $out_trade_no = $json_param['order_id'];
             $pay_trade_no=$json_param['payment_id'];
             if ($json_param['payment_status'] == 'confirmed' || $json_param['payment_status'] == 'finished') {
-                return [
-                    'trade_no' => $out_trade_no,
-                    'callback_no' => $pay_trade_no
-                ];
+                $this->postPayment($out_trade_no);
             }
             return $response->write('ok');
         }
